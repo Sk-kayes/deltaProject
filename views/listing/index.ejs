@@ -1,0 +1,79 @@
+<% layout("/layouts/boilerplate") %>
+<style>
+    #filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .filter {
+        text-decoration: none;
+        color: #111;
+        opacity: 0.7;
+        margin: 1rem 0;
+        text-align: center;
+    }
+    .filter:hover {
+        opacity: 1;
+        cursor: pointer;
+    }
+    .description {
+        font-size: 0.8rem;
+    }
+</style>
+<div id="filters">
+    <div class="filter" onclick="updateUrl('trending')">
+        <div class="icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
+        <p class="description">Trending</p>
+    </div>
+    <div class="filter" onclick="updateUrl('beach')">
+        <div class="icons"><i class="fa-solid fa-person-swimming"></i></div>
+        <p class="description">Beaches</p>
+    </div>
+    <div class="filter" onclick="updateUrl('mountain')">
+        <div class="icons"><i class="fa-solid fa-mountain"></i></div>
+        <p class="description">Mountain</p>
+    </div>
+    <div class="filter" onclick="updateUrl('cultural')">
+        <div class="icons"><i class="fa-solid fa-synagogue"></i></div>
+        <p class="description">Cultural</p>
+    </div>
+    <div class="filter" onclick="updateUrl('desert')">
+        <div class="icons"><i class="fa-solid fa-umbrella-beach"></i></div>
+        <p class="description">Desert</p>
+    </div>
+    <div class="filter" onclick="updateUrl('forest')">
+        <div class="icons"><i class="fa-solid fa-tree"></i></div>
+        <p class="description">Forest</p>
+    </div>
+    <div class="filter" onclick="updateUrl('city')">
+        <div class="icons"><i class="fa-solid fa-city"></i></div>
+        <p class="description">City</p>
+    </div>
+</div>
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 main">
+    <% for(let list of allListing) { %>
+        <a href="/listings/<%= list._id %>" class="listing-link">
+            <div class="card listing-card">
+                <img src="<%= list.image.url %>" class="card-img-top" alt="img" style="height: 20rem;">
+                <div class="card-img-overlay"></div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <b>
+                            <%
+                            function capitalizeFirstLetters(str) {
+                                return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                            }
+                            const title = list.title
+                            const capitalizedTitle = capitalizeFirstLetters(title);
+                            %>
+                            <%= capitalizedTitle %>
+                        </b> <br>
+                        &#8377;<%= (list.price).toLocaleString("en-IN") %> / Night
+                    </p>
+                </div>
+            </div>
+        </a>
+    <% } %>
+</div>

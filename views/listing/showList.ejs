@@ -1,0 +1,126 @@
+<style>
+    .card-body p {
+        margin: 0.5rem 0;
+    }
+
+    .disabled-link {
+        opacity: 0.6;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+</style>
+
+<% layout("/layouts/boilerplate") %>
+
+<% 
+    function capitalizeFirstLetters(str) {
+        return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    }
+%>
+
+<div class="row">
+    <!-- Title -->
+    <div class="col-8 offset-1 mt-3">
+        <%
+            const title = listDetails.title;
+            const capitalizedTitle = capitalizeFirstLetters(title);
+        %>
+        <h2><%= capitalizedTitle %></h2>
+    </div>
+
+    <!-- Show list details -->
+    <div class="card col-6 offset-1 listing-card">
+        <img src="<%= listDetails.image.url %>" alt="image" class="card-img-top show-img mt-2">
+        <div class="card-body">
+            <p>
+                <%
+                    const name = listDetails.owner.username; 
+                    const capitalizedName = capitalizeFirstLetters(name);
+                %>
+                Owned By <i><b>
+                <%= capitalizedName %> 
+            </b></i></p>
+            <p><b>Category:</b> <%= listDetails.category %></p>
+            <p class="card-text"><b>Description:</b> <%= listDetails.description.charAt(0).toUpperCase() + listDetails.description.slice(1)%></p>
+            <p><b>Price:</b> &#8377;<%= (listDetails.price).toLocaleString("en-IN") %>/ Night</p>
+            <p><b>Location:</b> <%= listDetails.location.charAt(0).toUpperCase() +  listDetails.location.slice(1) %></p>
+            <p><b>Country:</b> <%= listDetails.country.charAt(0).toUpperCase() +  listDetails.country.slice(1) %></p>
+        </div>
+    </div>
+
+    <!-- Edit & Delete Button -->
+    <% if (currUser && (currUser._id).equals(listDetails.owner._id)) { %>
+        <div class="btns d-flex justify-content-start">
+            <a href="/listings/<%= listDetails._id %>/edit" class="btn btn-primary offset-1 col-1">Edit</a>
+            <form action="/listings/<%= listDetails._id %>?_method=DELETE" method="POST">
+                <button class="btn btn-danger offset-2">Delete</button>
+            </form>
+        </div>
+    <% } else { %>
+        <div class="btns d-flex justify-content-start">
+            <a href="/listings/<%= listDetails._id %>/edit" class="btn btn-primary offset-1 col-1 disabled-link">Edit</a>
+            <form action="/listings/<%= listDetails._id %>?_method=DELETE" method="POST">
+                <button class="btn btn-danger offset-2 disable-button" type="button">Delete</button>
+            </form>
+        </div>
+    <% } %>
+    
+    <!-- Review Form -->
+    <div class="col-8 offset-1">
+        <% if(currUser) { %>
+        <form action="/listings/<%= listDetails._id %>/reviews" method="POST" class="mb-3 needs-validation" novalidate>
+            <h3>Leave a Review</h3>
+            <div>
+                <label for="rating" class="form-label"><b>Rating</b></label>
+                <fieldset class="starability-slot">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="review[rating]." />
+                    <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                    <label for="first-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                    <label for="first-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                    <label for="first-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                    <label for="first-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                    <label for="first-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+            </div>
+            
+            <div>
+                <label for="comment" class="form-label"><b>Comment</b></label>
+                <textarea name="review[comment]" id="comment" cols="20" rows="5" placeholder="Write comments.." class="form-control" required></textarea>
+                <div class="invalid-feedback">
+                    Write proper comment.
+                </div>
+            </div>
+            <button class="btn btn-outline-dark mt-3">Submit</button>
+        </form>
+        <% } %>
+    </div>
+    <hr>
+    <!-- Show all reviews -->
+        <div class="review row offset-1">
+            <p><b>Review Section</b></p>
+            <% for(rev of listDetails.review) { %>
+                <div class="card col-5 mb-3 ms-3 py-1 px-3">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <%
+                                const name = rev.author.username 
+                                const capitalizedName = capitalizeFirstLetters(name);
+                            %>
+                            <h5><b><%= capitalizedName %></b></h5>
+                        </div>
+                        <p class="starability-result card-text" data-rating="<%= rev.rating %>"></p>
+                        <div class="card-text">
+                            <%= rev.comment.charAt(0).toUpperCase() +  rev.comment.slice(1) %>
+                        </div>
+                    </div>
+                    <form action="/listings/<%= listDetails._id %>/reviews/<%= rev._id %>?_method=DELETE" method="POST">
+                        <button class="btn btn-sm btn-danger mb-3 mt-3">Delete</button>
+                    </form>
+                </div>
+            <% } %>
+        </div>
+</div>

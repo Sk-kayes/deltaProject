@@ -1,0 +1,27 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 main mt-5">
+    <% for(let country of countryList) { %>
+        <a href="/listings/<%= country._id %>" class="listing-link">
+            <div class="card listing-card">
+                <img src="<%= country.image.url %>" class="card-img-top" alt="img" style="height: 20rem;">
+                <div class="card-img-overlay"></div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <b>
+                            <%
+                            function capitalizeFirstLetters(str) {
+                                return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                            }
+                            const title = country.title
+                            const capitalizedTitle = capitalizeFirstLetters(title);
+                            %>
+                            <%= capitalizedTitle %>
+                        </b> <br>
+                        &#8377;<%= (country.price).toLocaleString("en-IN") %> / Night
+                    </p>
+                </div>
+            </div>
+        </a>
+    <% } %>
+</div>
